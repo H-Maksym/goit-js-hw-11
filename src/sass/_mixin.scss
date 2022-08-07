@@ -1,0 +1,54 @@
+// @mixin transition($tp: color, $td: 250ms, $ttf: cubic-bezier(0.4, 0, 0.2, 1)) {
+//   transition-property: $tp;
+//   transition-duration: $td;
+//   transition-timing-function: $ttf;
+// }
+
+@mixin mq($val) {
+  $mobile: 320px;
+  $fablet: 480px;
+  $tablet: 768px;
+  $desktop: 1200px;
+  @if $val==mob {
+    @media (min-width: $mobile) {
+      @content;
+    }
+  } @else if $val==mob-only {
+    @media (max-width:#{$fablet - 0.02}) {
+      @content;
+    }
+  } @else if $val==fab {
+    @media (min-width: $fablet) {
+      @content;
+    }
+  } @else if $val==fab-only {
+    @media (min-width:$fablet) and (max-width:#{$tablet - 0.02}) {
+      @content;
+    }
+  } @else if $val==tab {
+    @media (min-width: $tablet) {
+      @content;
+    }
+  } @else if $val==tab-only {
+    @media (min-width:$tablet) and (max-width:#{$desktop - 0.02}) {
+      @content;
+    }
+  } @else if $val==desk {
+    @media (min-width: $desktop) {
+      @content;
+    }
+  } @else if $val==noDesk {
+    @media (max-width:#{$desktop - 0.02}) {
+      @content;
+    }
+  } @else if $val==retina {
+    @media screen and (min-device-pixel-ratio: 2),
+      screen and (-moz-min-device-pixel-ratio: 2),
+      screen and (-o-min-device-pixel-ratio: 2/1),
+      screen and (-webkit-min-device-pixel-ratio: 2),
+      screen and (min-resolution: 192dpi),
+      screen and (min-resolution: 2dppx) {
+      @content;
+    }
+  }
+}
