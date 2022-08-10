@@ -1,25 +1,25 @@
-//TODO Create markup
+// //TODO Create markup
 function createPictureCard(hits) {
-    const { largeImageURL, webformatURL, tags } = hits;
+    const { largeImageURL, webformatURL, tags, webformatWidth, webformatHeight, likes, views, comments, downloads } = hits;
     return /* html */`<li class="photo__card card-set-item">
     <a class="gallery__item" href="${largeImageURL}">
-        <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" width=${hits.webformatWidth} height=${hits.webformatHeight}/>
+        <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" width=${webformatWidth} height=${webformatHeight}/>
     <ul class="info card-set">
         <li class="info__item card-set-item">
             <b>Likes</b>
-            <span>${hits.likes}</span>
+            <span>${likes}</span>
         </li>
         <li class="info__item card-set-item">
             <b>Views</b>
-            <span>${hits.views}</span>
+            <span>${views}</span>
         </li>
         <li class="info__item card-set-item">
             <b>Comments</b>
-            <span>${hits.comments}</span>
+            <span>${comments}</span>
         </li>
         <li class="info__item card-set-item">
             <b>Downloads</b>
-            <span>${hits.downloads}</span>
+            <span>${downloads}</span>
         </li>
     </ul>
     </a>
@@ -27,6 +27,9 @@ function createPictureCard(hits) {
 }
 
 export function appendImagesContainerEl(hits, elements) {
+    if (!hits.length) {
+        return;
+    }
     const markup = hits.map(createPictureCard).join('');
     elements.insertAdjacentHTML("beforeend", markup);
 }

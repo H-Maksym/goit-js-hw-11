@@ -1,47 +1,88 @@
 //TODO Import
 import '/src/sass/index.scss'
+
+//Import SimpleLightBox library + custom function
 import "simplelightbox/dist/simple-lightbox.min.css";
-import SimpleLightbox from "simplelightbox";
-import lightboxRefresh from './lightbox';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import PixabayApiService from "./pixabayApiService";
+import lightboxRefresh from './js/lightbox';
 
+//Import Debounce library
+const debounce = require('lodash.debounce');
 
-import { appendImagesContainerEl, clearImagesContainerEl } from "./markup";
-import refs from './refs'
+//Import custom service Pixabay
+import PixabayApiService from "./js/pixabayApiService";
 
-const { formEl, imagesContainerEl, btnLoad } = refs();
+//Import markup functional
+import { appendImagesContainerEl, clearImagesContainerEl } from "./js/markup";
 
+//Import refs DOM
+import refs from './js/refs'
+
+//Import custom notification 
+import { letMsgEnterYouQuery, letMsgNoImagesByQuery, letMsgAllImagesLoaded, letMsgTotalFindImages } from "./js/message"
+
+//import featchBrowsDetection from './js/featch-detection';
+
+//Destructuring object
+const { formEl, imagesContainerEl } = refs();
+
+//Сreate an instance of the class
 const pixabayApiService = new PixabayApiService();
 
 //TODO callback from submit event
-function onFormSubmit(e) {
+async function onFormSubmit(e) {
     e.preventDefault();
-    pixabayApiService.resetPage();
-    pixabayApiService.searchQuery = e.currentTarget.elements.searchQuery.value;
-    pixabayApiService.fetchImage()
-        .then(data => {
-            Notify.success(`Hooray! We found ${data.totalHits} images.`)
-            return data.hits;
-        })
-        .then(hits => {
-            pixabayApiService.incrementPage();
-            clearImagesContainerEl(imagesContainerEl);
-            appendImagesContainerEl(hits, imagesContainerEl);
-            lightboxRefresh();
-        })
+    pixabayApiService.resetSetting();
+    window.scrollTo(0, 0);
+    clearImagesContainerEl(imagesContainerEl);
+    pixabayApiService.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
+    pixabayApiService.loading = false;
+
+    try {
+        await pixabayApiService.fetchImage();
+        const { searchQuery, totalHits, hits } = pixabayApiService;
+        if (!searchQuery) {
+            return letMsgEnterYouQuery();
+        }
+        if (!totalHits) {
+            return letMsgNoImagesByQuery();
+        }
+        letMsgTotalFindImages(totalHits);
+        appendImagesContainerEl(hits, imagesContainerEl);
+        lightboxRefresh();
+
+    }
+    catch (error) {
+        console.log(error.message);
+    }
 }
 
 formEl.addEventListener("submit", onFormSubmit);
-btnLoad.addEventListener("click", onBtnLoadClick);
 
-function onBtnLoadClick(e) {
-    pixabayApiService.incrementPage()
-    pixabayApiService.fetchImage()
-        .then(data => data.hits)
-        .then(hits => {
-            appendImagesContainerEl(hits, imagesContainerEl);
-            lightboxRefresh();
-        })
+
+//TODO callback from scroll event
+async function infinityScroll(e) {
+    const documentRect = document.documentElement.getBoundingClientRect();
+    try {
+        if (documentRect.bottom < document.documentElement.clientHeight + 300) {
+            if (!(pixabayApiService.hits.length < pixabayApiService.per_page)) {
+                pixabayApiService.incrementPage();
+                await pixabayApiService.fetchImage();
+                appendImagesContainerEl(pixabayApiService.hits, imagesContainerEl);
+                lightboxRefresh();
+            } else {
+                if (!pixabayApiService.loading) {
+                    pixabayApiService.loading = true;
+                    letMsgAllImagesLoaded()
+                }
+            };
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
 }
+
+window.addEventListener("scroll", debounce(infinityScroll, 100))
+
+
+
 

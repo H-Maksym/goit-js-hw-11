@@ -5,3 +5,4 @@ export default function refs() {
         btnLoad: document.querySelector('.btn__load-more'),
     };
 }
+
