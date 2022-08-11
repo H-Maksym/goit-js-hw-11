@@ -1,3 +1,4 @@
+//TODO Functional Simple Light Box
 import SimpleLightbox from "simplelightbox";
 
 const lightbox = new SimpleLightbox('.gallery a', {

@@ -1,3 +1,4 @@
+//TODO Different notification
 //Import Notify library
 import { Notify } from "notiflix"
 

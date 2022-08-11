@@ -65,7 +65,7 @@ ul {
 }
 
 .gallery {
-  padding: 100px;
+  padding-top: 70px;
   @include mq(tab) {
     --card-gap: 20px;
     --card-item: 2;
@@ -85,7 +85,7 @@ ul {
 img {
   display: flex;
   width: 100%;
-  height: auto;
+  height: 100%;
   flex-grow: 1;
   transition: transform 400ms ease-out;
 }
@@ -108,13 +108,13 @@ img {
   --card-item: 2;
 
   display: flex;
-  padding: 20px 5px;
+  padding: 10px 5px;
   justify-content: center;
   color: #212121;
 }
 
 .info__item {
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   flex-direction: column;
   gap: 5px;

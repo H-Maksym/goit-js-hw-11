@@ -28,6 +28,23 @@ const { formEl, imagesContainerEl } = refs();
 //Сreate an instance of the class
 const pixabayApiService = new PixabayApiService();
 
+
+//TODO Functional with add and remove listener;
+
+const debounseScroll = debounce(infinityScroll, 100);
+
+function addListener() {
+    window.addEventListener("scroll", debounseScroll)
+}
+
+function removeListener() {
+    window.removeEventListener("scroll", debounseScroll)
+}
+
+formEl.addEventListener("submit", onFormSubmit);
+
+
+
 //TODO callback from submit event
 async function onFormSubmit(e) {
     e.preventDefault();
@@ -49,6 +66,7 @@ async function onFormSubmit(e) {
         letMsgTotalFindImages(totalHits);
         appendImagesContainerEl(hits, imagesContainerEl);
         lightboxRefresh();
+        addListener();
 
     }
     catch (error) {
@@ -56,11 +74,9 @@ async function onFormSubmit(e) {
     }
 }
 
-formEl.addEventListener("submit", onFormSubmit);
-
-
 //TODO callback from scroll event
 async function infinityScroll(e) {
+    console.log("listener");
     const documentRect = document.documentElement.getBoundingClientRect();
     try {
         if (documentRect.bottom < document.documentElement.clientHeight + 300) {
@@ -71,6 +87,7 @@ async function infinityScroll(e) {
                 lightboxRefresh();
             } else {
                 if (!pixabayApiService.loading) {
+                    removeListener();
                     pixabayApiService.loading = true;
                     letMsgAllImagesLoaded()
                 }
@@ -81,7 +98,6 @@ async function infinityScroll(e) {
     }
 }
 
-window.addEventListener("scroll", debounce(infinityScroll, 100))
 
 
 
