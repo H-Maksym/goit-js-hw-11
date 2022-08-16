@@ -37,9 +37,14 @@ ul {
   background-color: rgba(30, 144, 255);
   z-index: 100;
 }
+.search-form {
+  position: relative;
+}
 
 .btn {
-  margin-left: 10px;
+  position: absolute;
+  right: 0px;
+  cursor: pointer;
   background-image: url(../images/search-logo.png);
   background-repeat: no-repeat;
   background-size: 20px;
@@ -57,10 +62,12 @@ ul {
 }
 
 .form__input {
+  outline: 0;
   border: none;
+  border-radius: 20px;
   padding: 5px 10px;
   font-size: 16px;
-  width: 200px;
+  width: 250px;
   height: 40px;
 }
 

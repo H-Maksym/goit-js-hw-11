@@ -54,6 +54,7 @@ async function onFormSubmit(e) {
     pixabayApiService.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
     pixabayApiService.loading = false;
 
+
     try {
         await pixabayApiService.fetchImage();
         const { searchQuery, totalHits, hits } = pixabayApiService;
@@ -76,20 +77,20 @@ async function onFormSubmit(e) {
 
 //TODO callback from scroll event
 async function infinityScroll(e) {
-    console.log("listener");
+
     const documentRect = document.documentElement.getBoundingClientRect();
     try {
         if (documentRect.bottom < document.documentElement.clientHeight + 300) {
-            if (!(pixabayApiService.hits.length < pixabayApiService.per_page)) {
+            if (!(pixabayApiService.hits.length < pixabayApiService.per_page) && !(pixabayApiService.totalHits <= imagesContainerEl.children.length)) {
                 pixabayApiService.incrementPage();
                 await pixabayApiService.fetchImage();
                 appendImagesContainerEl(pixabayApiService.hits, imagesContainerEl);
                 lightboxRefresh();
             } else {
-                if (!pixabayApiService.loading) {
+                if ((!pixabayApiService.loading)) {
                     removeListener();
                     pixabayApiService.loading = true;
-                    letMsgAllImagesLoaded()
+                    letMsgAllImagesLoaded();
                 }
             };
         }
